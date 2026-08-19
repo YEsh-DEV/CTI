@@ -1,0 +1,58 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Environment and Secrets
+*.env
+*.env.local
+*.env.*.local
+Neo4j-*.txt
+*.pem
+*.key
+
+# IDEs and Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.agents/
+
+# Logs
+logs/
+*.log
+task1/temporal_rag/logs/
+
+# Large Datasets & Generated Artifacts
+DATASETS/CVE/
+DATASETS/CTI_Report_Dataset/
+task1/temporal_rag/data/raw/
+task1/temporal_rag/data/normalized/
+task1/temporal_rag/data/_rejected/
