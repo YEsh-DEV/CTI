@@ -1,0 +1,73 @@
+{
+    "dataType": "CVE_RECORD",
+    "dataVersion": "5.2",
+    "cveMetadata": {
+        "cveId": "CVE-2026-74234",
+        "assignerOrgId": "83251b91-4cc7-4094-a5c7-464a1b83ea10",
+        "state": "PUBLISHED",
+        "datePublished": "2026-08-17T19:38:05.767Z",
+        "dateUpdated": "2026-08-17T19:55:37.779Z"
+    },
+    "containers": {
+        "cna": {
+            "title": "Legora < 2026-08-14 XSS via Mermaid gray-matter JavaScript Engine",
+            "descriptions": [
+                {
+                    "lang": "en",
+                    "value": "Legora before 2026-08-14 contains a cross-site scripting vulnerability that allows attackers to achieve arbitrary JavaScript execution in a victim's browser."
+                }
+            ],
+            "datePublic": "2026-08-17T00:00:00.000Z",
+            "problemTypes": [
+                {
+                    "descriptions": [
+                        {
+                            "lang": "en",
+                            "cweId": "CWE-95",
+                            "description": "Improper Neutralization of Directives in Dynamically Evaluated Code ('Eval Injection')",
+                            "type": "CWE"
+                        }
+                    ]
+                }
+            ],
+            "affected": [
+                {
+                    "vendor": "Legora",
+                    "product": "Legora",
+                    "versions": [
+                        {
+                            "status": "affected",
+                            "version": "0",
+                            "lessThan": "2026-08-14"
+                        }
+                    ]
+                }
+            ],
+            "metrics": [
+                {
+                    "format": "CVSS",
+                    "cvssV4_0": {
+                        "version": "4.0",
+                        "baseSeverity": "MEDIUM",
+                        "baseScore": 5.1,
+                        "vectorString": "CVSS:4.0/AV:N/AC:H/AT:N/PR:L/UI:P/VC:N/VI:N/VA:N/SC:H/SI:H/SA:N"
+                    }
+                },
+                {
+                    "format": "CVSS",
+                    "cvssV3_1": {
+                        "version": "3.1",
+                        "baseSeverity": "HIGH",
+                        "baseScore": 7.7,
+                        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:L/UI:R/S:C/C:H/I:H/A:N"
+                    }
+                }
+            ],
+            "references": [
+                {
+                    "url": "https://legora.com/"
+                }
+            ]
+        }
+    }
+}

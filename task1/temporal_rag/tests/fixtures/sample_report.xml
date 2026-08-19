@@ -1,0 +1,21 @@
+<CTIMinerDataset>
+  <Event>
+    <id>1976</id>
+    <date>2019-01-30</date>
+    <info>Chafer used Remexi malware to spy on Iran-based foreign diplomatic entities.pdf</info>
+    <Attribute>
+      <category>Payload installation</category>
+      <comment>original_filename</comment>
+      <value>&lt;MWS_SAMPLE_DIR&gt;/events.exe</value>
+      <type>filename</type>
+      <id>19820</id>
+    </Attribute>
+    <Attribute>
+      <category>Network activity</category>
+      <comment/>
+      <value>108.61.189.174</value>
+      <type>ip-src</type>
+      <id>19841</id>
+    </Attribute>
+  </Event>
+</CTIMinerDataset>
