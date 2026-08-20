@@ -120,3 +120,15 @@ ENTITY_ALIASES = {
 ALIGNMENT_DATA_DIR = BASE_DIR / "data" / "alignment"
 ALIGNMENT_DATA_DIR.mkdir(parents=True, exist_ok=True)
 
+# ==============================================================================
+# Phase 5: Temporal-Causal GraphRAG Reasoning
+# ==============================================================================
+TOP_K_RETRIEVAL = int(os.getenv("TOP_K_RETRIEVAL", "20"))
+MAX_CONTEXT_TOKENS = int(os.getenv("MAX_CONTEXT_TOKENS", "4096"))
+GRAPH_TRAVERSAL_DEPTH = int(os.getenv("GRAPH_TRAVERSAL_DEPTH", "4"))
+
+FAISS_DIR = BASE_DIR / "data" / "faiss"
+FAISS_DIR.mkdir(parents=True, exist_ok=True)
+FAISS_INDEX_PATH = Path(os.getenv("FAISS_INDEX_PATH", str(FAISS_DIR / "entity_index.faiss")))
+FAISS_METADATA_PATH = Path(os.getenv("FAISS_METADATA_PATH", str(FAISS_DIR / "entity_metadata.jsonl")))
+
