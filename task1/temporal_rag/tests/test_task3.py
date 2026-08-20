@@ -208,25 +208,25 @@ class TestTask3TrustScoring(unittest.TestCase):
 
     def test_trust_formula_combination_math(self):
         """Test exact mathematical combination and thresholding."""
-        # Case 1: High trust across all factors
-        # 0.20*1.0 + 0.20*0.80 + 0.20*1.0 + 0.20*0.60 + 0.20*1.0 - 0.10*0.0 = 0.88
+        # Case 1: High trust across all factors (v2 weights)
+        # 0.25*1.0 + 0.20*0.80 + 0.15*1.0 + 0.25*0.60 + 0.15*1.0 - 0.05*0.0 = 0.86
         trust, trusted = calculate_trust_score(
             s1=1.0, s2=0.80, s3=1.0, s4=0.60, s5=1.0, s6=0.0
         )
-        self.assertAlmostEqual(trust, 0.88, places=4)
+        self.assertAlmostEqual(trust, 0.86, places=4)
         self.assertTrue(trusted)
 
         # Case 2: Contradiction applied
-        # 0.88 - 0.10*0.5 = 0.88 - 0.05 = 0.83
+        # 0.86 - 0.05*0.5 = 0.86 - 0.025 = 0.835
         trust_c, trusted_c = calculate_trust_score(
             s1=1.0, s2=0.80, s3=1.0, s4=0.60, s5=1.0, s6=0.5
         )
-        self.assertAlmostEqual(trust_c, 0.83, places=4)
+        self.assertAlmostEqual(trust_c, 0.835, places=4)
         self.assertTrue(trusted_c)
 
         # Case 3: Standard IOC triple (untrusted under strict 0.80 threshold)
         # s1=1.0, s2=0.65 (MISP_IOC), s3=0.30 (IOC rel), s4=0.30 (1 src), s5=1.0, s6=0.0
-        # Trust = 0.20(1.0 + 0.65 + 0.30 + 0.30 + 1.0) = 0.20 * 3.25 = 0.65
+        # Trust = 0.25*1.0 + 0.20*0.65 + 0.15*0.30 + 0.25*0.30 + 0.15*1.0 = 0.65
         trust_ioc, trusted_ioc = calculate_trust_score(
             s1=1.0, s2=0.65, s3=0.30, s4=0.30, s5=1.0, s6=0.0
         )
@@ -235,12 +235,13 @@ class TestTask3TrustScoring(unittest.TestCase):
 
         # Case 4: High-corroborated CVE triple (trusted)
         # s1=1.0, s2=0.90 (CVE), s3=0.50, s4=1.0 (3+ src), s5=1.0, s6=0.0
-        # Trust = 0.20(1.0 + 0.90 + 0.50 + 1.0 + 1.0) = 0.20 * 4.40 = 0.88
+        # Trust = 0.25*1.0 + 0.20*0.90 + 0.15*0.50 + 0.25*1.0 + 0.15*1.0 = 0.905
         trust_cve, trusted_cve = calculate_trust_score(
             s1=1.0, s2=0.90, s3=0.50, s4=1.0, s5=1.0, s6=0.0
         )
-        self.assertAlmostEqual(trust_cve, 0.88, places=4)
+        self.assertAlmostEqual(trust_cve, 0.905, places=4)
         self.assertTrue(trusted_cve)
+
 
 
 if __name__ == "__main__":

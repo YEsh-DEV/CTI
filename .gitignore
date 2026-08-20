@@ -56,3 +56,4 @@ DATASETS/CTI_Report_Dataset/
 task1/temporal_rag/data/raw/
 task1/temporal_rag/data/normalized/
 task1/temporal_rag/data/_rejected/
+task1/temporal_rag/data/alignment/

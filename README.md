@@ -36,6 +36,16 @@ A research-grade Cyber Threat Intelligence (CTI) platform implementing an end-to
  │  - 6-Factor Trust Formula              │
  │  - MITRE ATT&CK Taxonomy Matching      │
  │  - Temporal Contradiction Detection    │
+ └───────────────────┬────────────────────┘
+                     │
+                     ▼
+ ┌────────────────────────────────────────┐
+ │ Task 4: Entity Alignment & Resolution  │
+ │  - Exact / Alias Normalization         │
+ │  - Dense Embeddings (all-mpnet-base-v2)│
+ │  - FAISS Vector Similarity Clustering  │
+ │  - 730-Day Temporal Overlap Validation │
+ │  - Canonical ID Assignment & Indexing  │
  └────────────────────────────────────────┘
 ```
 
@@ -51,16 +61,17 @@ CTI-TTP/
 ├── DOCS/                          # Specification and architectural docs
 ├── task1/
 │   └── temporal_rag/
-│       ├── common/                # LLM (Ollama) & Neo4j driver wrappers
-│       ├── config/                # Environment and trust formula weights
+│       ├── common/                # EmbeddingClient, Ollama & Neo4j clients
+│       ├── config/                # Settings, trust weights & alias dictionary
+│       ├── data/                  # Raw/normalized cache & alignment audit
 │       ├── ingestion/             # MISP XML and CVE JSON parsers
 │       ├── reference_data/        # ATT&CK loader & fuzzy matcher
 │       ├── schemas/               # Pydantic data schemas
-│       ├── tasks/                 # Task 1, Task 2, and Task 3 pipelines
-│       └── tests/                 # Unit & integration test suites
+│       ├── tasks/                 # Task 1, 2, 3, 4 pipelines
+│       └── tests/                 # 32+ unit & integration test suite
 ├── task2/                         # Task 2 documentation and scripts
 ├── task3/                         # Task 3 documentation and scripts
-├── task4/                         # Task 4 alignment and canonicalization
+├── task4/                         # Task 4 documentation and scripts
 └── README.md
 ```
 
@@ -93,7 +104,16 @@ python -m tasks.task2_temporal_graph --setup-schema
 python -m tasks.task2_temporal_graph --all --batch-size 250
 python -m tasks.task2_temporal_graph --verify
 
-# Task 3: Trust Scoring & Temporal Verification
+# Task 3: Initial Trust Scoring
 python -m tasks.task3_trust --all --batch-size 1000
+python -m tasks.task3_trust --verify
+
+# Task 4: Entity Alignment & Canonicalization
+python -m tasks.task4_alignment --align
+python -m tasks.task4_alignment --verify
+python -m tasks.task4_alignment --show-decisions
+
+# Refresh Trust Scoring with Canonical Entities
+python -m tasks.task3_trust --all --force --batch-size 1000
 python -m tasks.task3_trust --verify
 ```

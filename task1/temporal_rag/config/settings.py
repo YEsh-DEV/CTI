@@ -51,18 +51,36 @@ for directory in [
 #              + δ×cross_source_support + ε×temporal_consistency - λ×contradiction_penalty
 # ==============================================================================
 
-# PLACEHOLDER — requires calibration/experimentation. Default equal weighting only.
-TRUST_ALPHA = float(os.getenv("TRUST_ALPHA", "0.20"))
-# PLACEHOLDER — requires calibration/experimentation. Default equal weighting only.
+# ADJUSTED v2 — still experimental, not validated research values.
+# Rationale: reduced ATT&CK weight to avoid penalizing IOC-heavy MISP dataset.
+# Increased cross-source support weight as multi-source corroboration is strongest 
+# signal in this dataset. Requires proper ablation study for final values.
+TRUST_ALPHA = float(os.getenv("TRUST_ALPHA", "0.25"))
+# ADJUSTED v2 — still experimental, not validated research values.
+# Rationale: reduced ATT&CK weight to avoid penalizing IOC-heavy MISP dataset.
+# Increased cross-source support weight as multi-source corroboration is strongest 
+# signal in this dataset. Requires proper ablation study for final values.
 TRUST_BETA = float(os.getenv("TRUST_BETA", "0.20"))
-# PLACEHOLDER — requires calibration/experimentation. Default equal weighting only.
-TRUST_GAMMA = float(os.getenv("TRUST_GAMMA", "0.20"))
-# PLACEHOLDER — requires calibration/experimentation. Default equal weighting only.
-TRUST_DELTA = float(os.getenv("TRUST_DELTA", "0.20"))
-# PLACEHOLDER — requires calibration/experimentation. Default equal weighting only.
-TRUST_EPSILON = float(os.getenv("TRUST_EPSILON", "0.20"))
-# PLACEHOLDER — requires calibration/experimentation. Default equal weighting only.
-TRUST_LAMBDA = float(os.getenv("TRUST_LAMBDA", "0.10"))
+# ADJUSTED v2 — still experimental, not validated research values.
+# Rationale: reduced ATT&CK weight to avoid penalizing IOC-heavy MISP dataset.
+# Increased cross-source support weight as multi-source corroboration is strongest 
+# signal in this dataset. Requires proper ablation study for final values.
+TRUST_GAMMA = float(os.getenv("TRUST_GAMMA", "0.15"))
+# ADJUSTED v2 — still experimental, not validated research values.
+# Rationale: reduced ATT&CK weight to avoid penalizing IOC-heavy MISP dataset.
+# Increased cross-source support weight as multi-source corroboration is strongest 
+# signal in this dataset. Requires proper ablation study for final values.
+TRUST_DELTA = float(os.getenv("TRUST_DELTA", "0.25"))
+# ADJUSTED v2 — still experimental, not validated research values.
+# Rationale: reduced ATT&CK weight to avoid penalizing IOC-heavy MISP dataset.
+# Increased cross-source support weight as multi-source corroboration is strongest 
+# signal in this dataset. Requires proper ablation study for final values.
+TRUST_EPSILON = float(os.getenv("TRUST_EPSILON", "0.15"))
+# ADJUSTED v2 — still experimental, not validated research values.
+# Rationale: reduced ATT&CK weight to avoid penalizing IOC-heavy MISP dataset.
+# Increased cross-source support weight as multi-source corroboration is strongest 
+# signal in this dataset. Requires proper ablation study for final values.
+TRUST_LAMBDA = float(os.getenv("TRUST_LAMBDA", "0.05"))
 
 # Trust threshold from professor's specification
 TRUST_THRESHOLD = float(os.getenv("TRUST_THRESHOLD", "0.80"))
@@ -77,4 +95,28 @@ SOURCE_RELIABILITY = {
 
 # ATT&CK Excel Dataset path
 ATTCK_XLSX_PATH = Path(os.getenv("ATTCK_XLSX_PATH", str(BASE_DIR.parent.parent / "DATASETS" / "attackmitre.xlsx")))
+
+# ==============================================================================
+# Phase 4: Entity Alignment & Canonicalization
+# ==============================================================================
+EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "sentence-transformers/all-mpnet-base-v2")
+EMBEDDING_DIM = int(os.getenv("EMBEDDING_DIM", "768"))
+# Default 0.85 — higher than CTINexus's 0.6 because we want to avoid 
+# false merges. Tunable — lower to 0.75 for more aggressive 
+# alignment, raise to 0.90 for conservative. Requires manual review of 
+# borderline cases.
+ALIGNMENT_SIMILARITY_THRESHOLD = float(os.getenv("ALIGNMENT_SIMILARITY_THRESHOLD", "0.85"))
+
+# Manually defined alias table (extend with domain knowledge)
+ENTITY_ALIASES = {
+    "fancy bear": "APT28",
+    "sofacy": "APT28", 
+    "cozy bear": "APT29",
+    "lazarus group": "Lazarus",
+    "ocean lotus": "OceanLotus",
+    "oceanlotus": "OceanLotus",
+}
+
+ALIGNMENT_DATA_DIR = BASE_DIR / "data" / "alignment"
+ALIGNMENT_DATA_DIR.mkdir(parents=True, exist_ok=True)
 
