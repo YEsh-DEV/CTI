@@ -314,10 +314,12 @@ class TrustScoringPipeline:
                    r.tau_precision AS tau_precision,
                    h.name AS head_name,
                    h.type AS head_type,
+                   coalesce(h.canonical_id, h.name) AS head_canonical,
                    h.first_seen AS head_first_seen,
                    h.last_seen AS head_last_seen,
                    t.name AS tail_name,
                    t.type AS tail_type,
+                   coalesce(t.canonical_id, t.name) AS tail_canonical,
                    t.first_seen AS tail_first_seen,
                    t.last_seen AS tail_last_seen
             LIMIT $limit
@@ -326,15 +328,17 @@ class TrustScoringPipeline:
             if not batch:
                 break
 
-            # 1. Extract unique triples to batch-query cross-source support and contradictions
+            # 1. Extract unique triples by canonical_id to batch-query cross-source support and contradictions
             unique_triples = {}
             for row in batch:
-                key = (row["head_name"], row["rel_type"], row["tail_name"])
+                h_canon = row.get("head_canonical") or row["head_name"]
+                t_canon = row.get("tail_canonical") or row["tail_name"]
+                key = (h_canon, row["rel_type"], t_canon)
                 if key not in unique_triples:
                     unique_triples[key] = {
-                        "head": row["head_name"],
+                        "head": h_canon,
                         "rel_type": row["rel_type"],
-                        "tail": row["tail_name"],
+                        "tail": t_canon,
                     }
 
             triple_stats = self._query_triple_stats(list(unique_triples.values()))
@@ -345,7 +349,9 @@ class TrustScoringPipeline:
                 h_name = row["head_name"]
                 r_type = row["rel_type"]
                 t_name = row["tail_name"]
-                t_key = (h_name, r_type, t_name)
+                h_canon = row.get("head_canonical") or h_name
+                t_canon = row.get("tail_canonical") or t_name
+                t_key = (h_canon, r_type, t_canon)
 
                 # Sub-score 1: LLM Confidence
                 s1 = compute_llm_confidence(row.get("confidence"))
@@ -358,8 +364,8 @@ class TrustScoringPipeline:
                     rel_type=r_type,
                 )
 
-                # Sub-score 3: ATT&CK Similarity
-                s3 = compute_attck_similarity(
+                # Sub-score 3: ATT&CK Similarity (check both raw name and canonical name)
+                s3_name = compute_attck_similarity(
                     head_name=h_name,
                     head_type=row.get("head_type", "Unknown"),
                     tail_name=t_name,
@@ -367,8 +373,17 @@ class TrustScoringPipeline:
                     rel_type=r_type,
                     attck_loader=self.attck_loader,
                 )
+                s3_canon = compute_attck_similarity(
+                    head_name=h_canon,
+                    head_type=row.get("head_type", "Unknown"),
+                    tail_name=t_canon,
+                    tail_type=row.get("tail_type", "Unknown"),
+                    rel_type=r_type,
+                    attck_loader=self.attck_loader,
+                )
+                s3 = max(s3_name, s3_canon)
 
-                # Sub-score 4: Cross Source Support
+                # Sub-score 4: Cross Source Support (via canonical_id)
                 t_stat = triple_stats.get(t_key, {"src_cnt": 1, "is_contradiction": False})
                 s4 = compute_cross_source_support(t_stat["src_cnt"])
 
@@ -436,13 +451,13 @@ class TrustScoringPipeline:
         return results
 
     def _query_triple_stats(self, triples: List[Dict[str, str]]) -> Dict[Tuple[str, str, str], Dict[str, Any]]:
-        """Query Neo4j for source count and day-precision dates for given triples."""
+        """Query Neo4j for source count and day-precision dates for given triples using canonical_id."""
         if not triples:
             return {}
 
         query = """
         UNWIND $triples AS t
-        MATCH (h:Entity {name: t.head})-[r]->(tail:Entity {name: t.tail})
+        MATCH (h:Entity {canonical_id: t.head})-[r]->(tail:Entity {canonical_id: t.tail})
         WHERE type(r) = t.rel_type
         RETURN t.head AS head, t.rel_type AS rel_type, t.tail AS tail,
                count(DISTINCT r.source) AS src_cnt,
